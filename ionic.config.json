@@ -1,0 +1,7 @@
+{
+  "name": "equipment-manager",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react"
+}

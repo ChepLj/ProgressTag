@@ -1,0 +1,161 @@
+.fontSize-tiny {
+  font-size: 6px !important;
+}
+
+.fontSize-small {
+  font-size: 10px !important;
+}
+
+.fontSize-normal {
+  font-size: 14px !important;
+}
+
+.fontSize-big {
+  font-size: 18px !important;
+}
+
+.fontSize-large {
+  font-size: 22px !important;
+}
+
+.fontStyle-boil {
+  font-weight: 600 !important;
+}
+
+.fontStyle-italic {
+  font-style: italic !important;
+}
+
+.padding-6px {
+  padding: 6px;
+}
+
+.padding-8px {
+  padding: 8px;
+}
+
+.padding-10px {
+  padding: 10px;
+}
+
+.padding-12px {
+  padding: 12px;
+}
+
+.padding-14px {
+  padding: 14px;
+}
+.padding-top-4px {
+  padding-top: 4px;
+}
+.padding-top-6px {
+  padding-top: 6px;
+}
+
+.padding-top-8px {
+  padding-top: 8px;
+}
+
+.padding-top-10px {
+  padding-top: 10px;
+}
+
+.padding-top-12px {
+  padding-top: 12px;
+}
+
+.padding-top-14px {
+  padding-top: 14px;
+}
+
+.padding-top-bottom-6px {
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+.no-padding-top-bottom {
+  padding-top: 0px;
+  padding-bottom: 0px;
+}
+.padding-left-right-8px {
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
+.margin-bottom-4px {
+  margin-bottom: 40px;
+}
+
+.no-margin-top-bottom {
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
+.margin-right-6px {
+  margin-right: 6px;
+}
+
+.alight-right {
+  align-items: end;
+  text-align: end;
+}
+
+.alight-item {
+  align-items: center;
+  justify-content: center;
+  display: flex;
+}
+
+ion-split-pane {
+  --border: 2px solid gray;
+
+  --side-width: 200px;
+  --side-max-width: 300px;
+  --side-min-width: 160px;
+}
+
+table {
+  width: 100% !important;
+}
+
+/* html{
+    font-size: 14px;
+} */
+
+/* width */
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 10px;
+}
+#modelImageShow {
+  background-color: #00000042;
+  --width: 70%;
+  --height: auto;
+  --max-height: 90%;
+}
+#modelImageShowMobile {
+  background-color: #00000042;
+  --width: 95%;
+  --height: auto;
+  --max-height: 90%;
+}
+
+
+/* global.scss */
+/* @media (prefers-color-scheme: dark) {
+  :root {
+    --ion-background-color: #000000;
+    --ion-text-color: #b6b1b1;
+    
+  }
+} */
+.in-segment{
+  color: rgb(201, 201, 201)
+}
+
+.segment-button-checked{
+  color: red;
+}

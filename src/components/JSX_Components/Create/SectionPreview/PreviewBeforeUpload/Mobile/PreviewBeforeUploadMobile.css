@@ -1,0 +1,39 @@
+.previewBeforeUpload_content-header {
+  box-shadow: 1px 1px 5px gray;
+  position: fixed;
+  background-color: white;
+  z-index: 2;
+}
+.previewBeforeUpload_content-header-fake {
+  z-index: 0;
+}
+.previewBeforeUpload_content-thumbnail {
+  width: 100%;
+  padding-top: 100%; /* 1:1 Aspect Ratio */
+  position: relative;
+}
+/* chia tỉ lệ ảnh là 1:1 */
+.previewBeforeUpload_content-thumbnail-img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  /* center */
+}
+
+.previewBeforeUpload_content-unit {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+}
+
+.previewBeforeUpload_accordion-icon {
+  padding-right: 5px;
+}
+
+.previewBeforeUpload_content-contentSection {
+  position: absolute;
+  top: 300px;
+  width: 100%;
+}
