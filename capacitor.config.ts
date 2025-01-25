@@ -1,8 +1,8 @@
 import { CapacitorConfig } from "@capacitor/cli";
 
 const config: CapacitorConfig = {
-  appId: "equipment.manager",
-  appName: "equipment-manager",
+  appId: "Progress.Tag",
+  appName: "Progress-Tag",
   webDir: "build",
   bundledWebRuntime: false,
   plugins: {

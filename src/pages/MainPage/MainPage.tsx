@@ -16,6 +16,8 @@ import CardView from "./ViewStyle/CardView";
 import ListView from "./ViewStyle/ListView";
 import TableView from "./ViewStyle/TableView";
 import MobileView from "./ViewStyle/MobileView";
+import { ProgressTagContext } from "../../context/progressTagContext";
+
 
 //! Main
 const MainPage: React.FC = () => {
@@ -30,6 +32,7 @@ const MainPage: React.FC = () => {
   console.log("🚀 ~ data:", data)
   const [KeyOfDataShowFilter, setKeyOfDataShowFilter] = useState<any>(keyOfDataShow);
   const { AuxiliaryData, disPatchAuxiliaryData } = useContext<any>(AuxiliaryDataContext);
+  const { ProgressTag, disPatchProgressTag } = useContext<any>(ProgressTagContext);
   const { authorLogin } = useContext<any>(AuthContext);
 
   const [searchState, setSearchState] = useState<any>({ type: false, payload: [] });
@@ -78,6 +81,7 @@ const MainPage: React.FC = () => {
   }, []);
 
   //TODO_END:Lấy StockList khi load Page lần đầu
+ 
 
   //TODO: refresh Data
   const handelRefresh = () => {
@@ -155,7 +159,7 @@ const MainPage: React.FC = () => {
         {viewStyle === "Mobile" && <MobileView keyOfDataRaw={keyOfDataRaw} virtuoso={virtuoso} data={data} disPatch={disPatch} ionItemSlidingRef={ionItemSlidingRef} authorLogin={authorLogin} />}
 
         {viewStyle === "List" && <ListView data={data} keyOfDataRaw={keyOfDataRaw} disPatch={disPatch} ionItemSlidingRef={ionItemSlidingRef} authorLogin={authorLogin} />}
-        {viewStyle === "Table" && <TableView data={data} keyOfDataRaw={keyOfDataRaw} disPatch={disPatch} ionItemSlidingRef={ionItemSlidingRef} authorLogin={authorLogin} />}
+        {/* {viewStyle === "Table" && <TableView data={data} keyOfDataRaw={keyOfDataRaw} disPatch={disPatch} ionItemSlidingRef={ionItemSlidingRef} authorLogin={authorLogin} />} */}
         {viewStyle === "Card" && <CardView data={data} keyOfDataRaw={keyOfDataRaw} disPatch={disPatch} ionItemSlidingRef={ionItemSlidingRef} authorLogin={authorLogin} />}
       </IonContent>
       <IonFab slot="fixed" vertical="bottom" horizontal="end">

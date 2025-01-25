@@ -9,8 +9,9 @@ import { Virtuoso } from "react-virtuoso";
 import ObjectData, { objectListRender } from "../../../components/FC_Components/initObjectData";
 import timestampToTime from "../../../components/FC_Components/timestampToTime";
 import { ITF_ObjectData, ITF_AuthorLogin } from "../../../interface/mainInterface";
-import "./MobileView.css";
+import './MobileView.css'
 export default function MobileView({ keyOfDataRaw, virtuoso, data, disPatch, ionItemSlidingRef, authorLogin }) {
+
   //TODO: Close All sliding
   const handelCloseSliding = () => {
     ionItemSlidingRef.current?.closeOpened();
@@ -59,7 +60,6 @@ const ItemList = ({
   ionItemSlidingRef: any;
   authorLogin: ITF_AuthorLogin;
 }) => {
-
   const history = useHistory(); //: lấy history
   const handleRemoveBlurhash = (id: string) => {
     const elm = document.getElementById(id);
@@ -102,12 +102,11 @@ const ItemList = ({
 
       <IonItem
         className="ion-no-padding ion-activatable ripple-parent"
-        style={{ paddingLeft: "5px",marginBottom: '5px' }}
         onClick={() => {
           objectData!.handelDetail(history, objectKey);
         }}
       >
-        <IonGrid fixed={true} style={{ minHeight: "95px", backgroundColor: "#e0e0e0", borderRadius: "15px" }}>
+        <IonGrid fixed={true}>
           <IonRow>
             <IonCol size-xs="3" className="ion-no-padding">
               <IonThumbnail className="mobileView_thumbnail">
@@ -127,31 +126,22 @@ const ItemList = ({
             </IonCol>
             <IonCol size-xs="9" className="ion-align-self-stretch mobileView_content-Col-Parent  ">
               <IonRow>
-                <IonText color={"medium"} className="fontSize-normal ">
+                <IonText color={"success"} className="fontSize-normal">
                   {objectData!.id}
+                </IonText>
+                <IonText color={"medium"} className="fontSize-normal padding-left-right-8px">
+                  ({objectData!.code})
                 </IonText>
               </IonRow>
               <IonRow>
                 <IonLabel
-                  color={"danger"}
-                  
-                  style={{
-                    fontSize: "1.2rem",
-                    fontWeight: 500,
-                  }}
-                >
-                  {objectData!.code}
-                </IonLabel>
-              </IonRow>
-              <IonRow>
-                <IonText
                   style={{
                     fontSize: "1.2rem",
                     fontWeight: 500,
                   }}
                 >
                   {objectData!.title}
-                </IonText>
+                </IonLabel>
               </IonRow>
               <IonRow>
                 <IonLabel color="medium" className="fontSize-normal padding-top-4px">

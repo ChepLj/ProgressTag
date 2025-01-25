@@ -4,10 +4,12 @@ import { ITF_ImagesObject } from "../../../interface/mainInterface";
 
 
 export default //TODO: Modal Show Image
-function ModalImageShow({isPhone, state, images, callback }: { isPhone:boolean; state: any; images: Array<ITF_ImagesObject>; callback: Function }) {
+function ModalImageShow({isPhone, state,  setShowImage }: { isPhone:boolean; state: any; setShowImage: Function }) {
+
+  // console.log("🚀 ~ ModalImageShow ~ state:", state)
   //TODO: Tính toán chuyển bức hình tiếp theo khi nhấn next
   const calculatorIndex = (): number => {
-    if (state.index < images.length - 1) {
+    if (state.index < state.images.length - 1) {
       const newIndex = state.index + 1;
       return newIndex;
     } else return 0;
@@ -17,7 +19,7 @@ function ModalImageShow({isPhone, state, images, callback }: { isPhone:boolean; 
     <IonModal
       isOpen={state.isOpen}
       onWillDismiss={() => {
-        callback({ isOpen: false, index: 0 });
+        setShowImage({ isOpen: false, index: 0, title: state.title, images: [] });
       }}
       id={isPhone ? "modelImageShowMobile": "modelImageShow"}
     >
@@ -26,19 +28,19 @@ function ModalImageShow({isPhone, state, images, callback }: { isPhone:boolean; 
           <IonButtons slot="start">
             <IonButton
               onClick={() => {
-                callback({ isOpen: false, index: 0 });
+                setShowImage({ isOpen: false, index: 0 });
               }}
             >
               Close
             </IonButton>
           </IonButtons>
           <IonTitle>
-            Image {state.index + 1}/{images?.length}
+            ({state.title}) {state.index + 1}/{state.images?.length}
           </IonTitle>
           <IonButtons slot="end">
             <IonButton
               onClick={() => {
-                callback({ isOpen: true, index: calculatorIndex() });
+                setShowImage({ isOpen: true, index: calculatorIndex(), title: state.title, images: state.images});
               }}
             >
               Next
@@ -48,7 +50,7 @@ function ModalImageShow({isPhone, state, images, callback }: { isPhone:boolean; 
       </IonHeader>
 
       <div className="detailImageShow">
-        <img src={images?.[state.index]?.image} className="detailImageShowItem" />
+        <img src={state.images?.[state.index]?.image} className="detailImageShowItem" />
       </div>
     </IonModal>
   );

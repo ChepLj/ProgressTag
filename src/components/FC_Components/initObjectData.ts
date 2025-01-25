@@ -1,5 +1,5 @@
 import { ActionSheet, ActionSheetButtonStyle } from "@capacitor/action-sheet";
-import { ITF_AttachmentsObject, ITF_AuthorLogin, ITF_ImagesObject, ITF_ProgressTag, ITF_StoreObject } from "../../interface/mainInterface";
+import { ITF_AttachmentsObject, ITF_AuthorLogin, ITF_ImagesObject, ITF_StoreObject } from "../../interface/mainInterface";
 import FC_HandelPreDelete from "./preDelete";
 import { setFavorite, unSetFavorite } from "./toggleFavorite";
 import { setImportant, unSetImportant } from "./toggleImportant";
@@ -8,14 +8,14 @@ import checkPermission from "./checkPermission";
 class ObjectData {
   //: Property
   id: string;
-  code: number;
+  // code: number;
   title: string;
-  progressTag: Array<ITF_ProgressTag>;
+  // progressTag: string;
   ref?: string;
   subTitle: string;
   description: string;
-  store: Array<ITF_StoreObject>;
-  tag: Array<string>;
+  // store: Array<ITF_StoreObject>;
+  // tag: Array<string>;
   note: string;
   icon: ITF_ImagesObject;
   images: Array<ITF_ImagesObject>;
@@ -28,18 +28,20 @@ class ObjectData {
   favorite: Array<string|number>;
   important: Array<string|number>;
   isPrivate: boolean;
-
+  area: string;
+  local: string;
   //:Constructor
   constructor({
+
+    // code,
     id,
-    code,
     title,
-    progressTag,
+    // progressTag,
     ref,
     subTitle,
     description,
-    store,
-    tag,
+    // store,
+    // tag,
     note,
     icon,
     images,
@@ -52,17 +54,19 @@ class ObjectData {
     favorite,
     important,
     isPrivate,
+    area,
+  local
   }: {
     //:convert to destructuring object
+    title:string;
+    // code: number;
     id: string;
-    code: number;
-    title: string;
-    progressTag: Array<ITF_ProgressTag>;
+    // progressTag: string;
     ref?: string;
     subTitle: string;
     description: string;
-    store: Array<ITF_StoreObject>;
-    tag:Array<string>;
+    // store: Array<ITF_StoreObject>;
+    // tag:Array<string>;
     note: string;
     icon: ITF_ImagesObject;
     images: Array<ITF_ImagesObject>;
@@ -75,16 +79,18 @@ class ObjectData {
     favorite: Array<string|number>;
     important: Array<string|number>;
     isPrivate: boolean;
+    area: string;
+  local: string;
   }) {
     this.id = id;
-    this.code = code;
+    // this.code = code;
     this.title = title;
-    this.progressTag = progressTag;
+    // this.progressTag = progressTag;
     this.ref= ref;
     this.subTitle = subTitle;
     this.description = description;
-    this.store = store;
-    this.tag = tag;
+    // this.store = store;
+    // this.tag = tag;
     this.note = note;
     this.icon = icon;
     this.images = images;
@@ -97,6 +103,8 @@ class ObjectData {
     this.favorite = favorite? favorite : [];
     this.important = important? important : [];
     this.isPrivate = isPrivate;
+    this.area = area;
+    this.local = local;
   }
   //:Behavior
   //TODO: hiển thị chi tiết

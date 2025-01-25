@@ -1,23 +1,25 @@
-import { IonAvatar, IonContent, IonIcon, IonImg, IonItem, IonLabel, IonList, IonListHeader, IonMenu, IonMenuToggle, IonNote, useIonRouter } from "@ionic/react";
+import { IonAvatar, IonButton, IonContent, IonIcon, IonImg, IonItem, IonLabel, IonList, IonListHeader, IonMenu, IonMenuToggle, IonNote, useIonRouter } from "@ionic/react";
 
 import {
   informationCircleOutline,
   informationCircleSharp,
   mailOutline,
   mailSharp,
+  moon,
   paperPlaneOutline,
   paperPlaneSharp,
   qrCodeOutline,
   qrCodeSharp,
+  sunny,
   trashOutline,
   trashSharp,
   warningOutline,
   warningSharp,
 } from "ionicons/icons";
-import { memo, useContext } from "react";
+import { memo, useContext, useEffect, useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import { AuthContext } from "../../../pages/LoginPage/function/loginContext";
-import equipmentIcon from "../../../source/img/icon.png";
+import progressTagIcon from "../../../source/img/progressIcon.jpg";
 import documentIcon from "../../../source/img/doccument-Icon.png";
 import "./Menu.css";
 
@@ -30,7 +32,7 @@ interface AppPage {
 
 const appPages: AppPage[] = [
   {
-    title: "Progress Tag",
+    title: "Main",
     url: "/page/Main",
     iosIcon: mailOutline,
     mdIcon: mailSharp,
@@ -75,6 +77,19 @@ const Menu = ({ dispatch }: { dispatch: Function }) => {
   const history = useHistory();
   const { authorLogin } = useContext<any>(AuthContext);
   const router = useIonRouter();
+
+  const [darkMode, setDarkMode] = useState(false);
+  //! Dark mode
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("dark-mode") === "true";
+    setDarkMode(savedTheme);
+  }, []);
+
+  useEffect(() => {
+    document.body.classList.toggle("dark", darkMode);
+    localStorage.setItem("dark-mode", darkMode.toString());
+  }, [darkMode]);
+
   const handelLogout = async () => {
     // const options = {
     //   url: "http://equipment.manager",
@@ -95,7 +110,7 @@ const Menu = ({ dispatch }: { dispatch: Function }) => {
   };
 
   const routerDirection = (appPage: AppPage) => {
-    if (appPage.title == "Progress Tag") {
+    if (appPage.title == "Main") {
       history.push({
         pathname: "/page/Redirect",
       });
@@ -123,7 +138,15 @@ const Menu = ({ dispatch }: { dispatch: Function }) => {
             </span>
           </IonListHeader>
 
-          <IonNote className="fontSize-normal fontStyle-italic">{authorLogin.displayName}</IonNote>
+          <div className="darkModeWrap">
+            <IonNote className="fontSize-normal fontStyle-italic" style={{ margin: "7px" }}>
+              {authorLogin.displayName}
+            </IonNote>
+            <IonButton onClick={() => setDarkMode(!darkMode)}  fill="clear" size="small" className="darkMode_button">
+              <IonIcon icon={darkMode ? sunny : moon} slot="icon-only" />
+            </IonButton>
+          </div>
+
           {appPages.map((appPage, index) => {
             return (
               <IonMenuToggle key={index} autoHide={false}>
@@ -158,9 +181,9 @@ const Menu = ({ dispatch }: { dispatch: Function }) => {
             detail={false}
           >
             <IonAvatar style={{ cursor: "pointer", fontSize: "22px", display: "flex", justifyContent: "center", alignItems: "center" }}>
-              <img alt="Silhouette of a person's head" src={equipmentIcon} style={{ width: "22px", height: "22px" }} />
+              <img alt="Silhouette of a person's head" src={progressTagIcon} style={{ width: "22px", height: "22px" }} />
             </IonAvatar>
-            <IonLabel>Equipment Manager</IonLabel>
+            <IonLabel>Progress Tag</IonLabel>
           </IonItem>
           <IonItem href="https://document-program.web.app/" style={{ cursor: "pointer", fontSize: "18px" }} lines="none" detail={false}>
             <IonAvatar style={{ cursor: "pointer", fontSize: "22px", display: "flex", justifyContent: "center", alignItems: "center" }}>

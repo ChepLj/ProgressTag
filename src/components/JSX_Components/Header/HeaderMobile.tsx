@@ -31,7 +31,7 @@ const Header = ({
           <IonImg alt="Avatar" src={authorLogin.photoURL} />
         </IonAvatar>
       </IonToolbar>
-      {title === "Progress Tag" && (
+      {title === "Main" && (
         <IonToolbar>
           <IonSearchbar debounce={500} onIonChange={(ev) => callbackResultSearch!(ev)} value={value}></IonSearchbar>
           <IonIcon icon={filterCircleOutline} slot="end" size="large" color={isFilter ? "danger" : "medium"} onClick={() => setModalFilterOpen!(!modalFilterOpen)} />

@@ -1,5 +1,5 @@
 {
-  "name": "equipment-manager",
+  "name": "progress-tag",
   "version": "0.0.1",
   "private": true,
   "dependencies": {
@@ -97,5 +97,5 @@
     "@capacitor/cli": "4.7.0",
     "@types/react-lazy-load-image-component": "^1.5.2"
   },
-  "description": "An Ionic project"
+  "description": "ProgressTag Pomina2"
 }

@@ -38,6 +38,7 @@ import LogsPage from "./pages/LogsPage/LogsPage";
 import MainPage from "./pages/MainPage/MainPage";
 import QRScan from "./pages/QRScan/QRScan";
 import TrashPage from "./pages/TrashPage/TrashPage";
+import { ProgressTagProvider } from "./context/progressTagContext";
 
 //! end
 setupIonicReact();
@@ -73,7 +74,6 @@ const App: React.FC = () => {
       /////////////////////////////////////////////////////////
       const authorTemp = localStorage.getItem("authorLogin");
       if (authorTemp) {
-
         const now = new Date();
         const oneDayInMs = 24 * 60 * 60 * 1000; // 1 day in milliseconds
         const authorDecryptTemp = decryptCrypto(authorTemp);
@@ -92,66 +92,68 @@ const App: React.FC = () => {
   return (
     <MainDataContext>
       <AuxiliaryDataProvider>
-        <IonApp>
-          <IonReactRouter>
-            {loading === "loading" && <h3 style={{ textAlign: "center", height: "100%", paddingTop: "90%" }}>Loading ...</h3>}
-            {loading === "not logged" && (
-              <IonRouterOutlet>
-                <Switch>
-                  <Route path="/page/Detail/QRCode/" exact={true}>
-                    <DetailPage />
-                  </Route>
-
-                  <Route path="*">
-                    <LoginPage />
-                  </Route>
-                </Switch>
-              </IonRouterOutlet>
-            )}
-            {loading === "logged" && authorLogin && (
-              <IonSplitPane contentId="main" when="(min-width: 800px)">
-                <Menu dispatch={setLoading} />
-
-                <IonRouterOutlet id="main">
-                  <Route path="/" exact={true}>
-                    <Redirect to="/page/Main" />
-                  </Route>
-                  <Route path="/page/Main" exact={true}>
-                    <MainPage />
-                  </Route>
-                  <Route path="/page/Create" exact={true}>
-                    <CreateEquipPage />
-                  </Route>
-                  <Route path="/page/QRScan" exact={true}>
-                    <QRScan />
-                  </Route>
-
-                  <Route path="/page/Edit/:id" exact={true}>
-                    <EditPage />
-                  </Route>
-                  <Route path="/page/Logs" exact={true}>
-                    <LogsPage />
-                  </Route>
-                  <Route path="/page/Trash" exact={true}>
-                    <TrashPage />
-                  </Route>
-                  <Route path="/page/Info" exact={true}>
-                    <HelpsPage />
-                  </Route>
-                  <Route path="/page/Detail/:id" exact={true}>
-                    <DetailPage />
-                  </Route>
+        <ProgressTagProvider>
+          <IonApp>
+            <IonReactRouter>
+              {loading === "loading" && <h3 style={{ textAlign: "center", height: "100%", paddingTop: "90%" }}>Loading ...</h3>}
+              {loading === "not logged" && (
+                <IonRouterOutlet>
+                  <Switch>
                   <Route path="/page/Detail/QRCode/:id" exact={true}>
-                    <DetailPage />
-                  </Route>
-                  <Route path="/page/Redirect" exact={true}>
-                    <LoadingPage />
-                  </Route>
+                      <DetailPage />
+                    </Route>             
+                    <Route path="*">
+                      <LoginPage />
+                    </Route>
+                  </Switch>
                 </IonRouterOutlet>
-              </IonSplitPane>
-            )}
-          </IonReactRouter>
-        </IonApp>
+              )}
+              {loading === "logged" && authorLogin && (
+                <IonSplitPane contentId="main" when="(min-width: 800px)">
+                  <Menu dispatch={setLoading} />
+
+                  <IonRouterOutlet id="main">
+                    <Route path="/" exact={true}>
+                      <Redirect to="/page/Main" />
+                    </Route>
+                    <Route path="/page/Main" exact={true}>
+                      <MainPage />
+                    </Route>
+                    <Route path="/page/Create" exact={true}>
+                      <CreateEquipPage />
+                    </Route>
+                    <Route path="/page/QRScan" exact={true}>
+                      <QRScan />
+                    </Route>
+
+                    <Route path="/page/Edit/:id" exact={true}>
+                      <EditPage />
+                    </Route>
+                    <Route path="/page/Logs" exact={true}>
+                      <LogsPage />
+                    </Route>
+                    <Route path="/page/Trash" exact={true}>
+                      <TrashPage />
+                    </Route>
+                    <Route path="/page/Info" exact={true}>
+                      <HelpsPage />
+                    </Route>
+                    <Route path="/page/Detail/:id" exact={true}>
+                      <DetailPage />
+                    </Route>
+                    
+                    <Route path="/page/Detail/QRCode/:id" exact={true}>
+                      <DetailPage />
+                    </Route>
+                    <Route path="/page/Redirect" exact={true}>
+                      <LoadingPage />
+                    </Route>
+                  </IonRouterOutlet>
+                </IonSplitPane>
+              )}
+            </IonReactRouter>
+          </IonApp>
+        </ProgressTagProvider>
       </AuxiliaryDataProvider>
     </MainDataContext>
   );

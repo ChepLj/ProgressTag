@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { IonPage, IonContent, IonText, useIonRouter } from "@ionic/react";
-import icon from '../../source/img/progressIcon.jpg'
+import icon from '../../source/img/icon.png'
 const LoadingPage: React.FC = () => {
   const router = useIonRouter();
 

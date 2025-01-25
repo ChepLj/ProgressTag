@@ -81,35 +81,41 @@ const ItemList = ({ objectData, index, objectKey, disPatch, ionItemSlidingRef, a
                 {objectData.icon.hash && <Blurhash id={`blurhash-${index}`} className="mainPage_img-blurhash" hash={objectData.icon.hash} resolutionX={32} resolutionY={32} punch={1} />}
               </IonThumbnail>
             </IonCol>
-            <IonCol className="ion-align-self-stretch main_content-Col-Parent  ">
-              <IonRow className="mainPage_content-ticker-father">
-                <IonText color={"success"} className="fontSize-normal">
+            <IonCol className="ion-align-self-stretch main_content-Col-Parent  " >
+              <IonRow className="mainPage_content-ticker-father" >
+                <IonText color={"medium"} className="fontSize-small">
                   {objectData!.id}
                 </IonText>
-                <IonText color={"medium"} className="fontSize-normal padding-left-right-8px mainPage_content-ticker-father">
-                  ({objectData!.code})
-                </IonText>
+                
                 <div className="mainPage_content-ticker">
                   {objectData?.isPrivate && <IonIcon icon={eyeOffOutline} color="tertiary" />}
                   {objectData?.important.includes(authorLogin.userName) && <IonIcon icon={alertOutline} color="danger" />}
                   {objectData?.favorite.includes(authorLogin.userName) && <IonIcon icon={heartSharp} color="warning" />}
                 </div>
               </IonRow>
-              <IonRow style={{ maxWidth: "680px" }}>
+              <IonRow  style={{maxWidth: "680px" ,display: 'flex',alignItem: 'center' , flexDirection: 'column'}}>
                 <IonLabel
                   className="fontStyle-boil "
                   style={{
-                    fontSize: "12px",
+                    fontSize: "14px",
                     fontWeight: 500,
+                    color: 'green'
                   }}
                 >
-                  {objectData!.title}
+                  {objectData!.title} 
                 </IonLabel>
+                <IonLabel  className="fontStyle-italic "
+                  style={{
+                    fontSize: "10px",
+                    fontWeight: 300,
+                    paddingLeft: '10px'
+                  }}>({objectData.area}/{objectData.local})</IonLabel>
               </IonRow>
               <IonRow style={{ maxWidth: "680px" }}>
                 <IonLabel color="medium" className="fontSize-small padding-top-4px">
-                  {objectData!.description.replaceAll("<br/>", " ")}
+                  {objectData!.subTitle}
                 </IonLabel>
+              
               </IonRow>
               <div className="sy-Col-Child ion-justify-content-end fontSize-small ">
                 <IonCol size="auto" className="ion-no-padding ">

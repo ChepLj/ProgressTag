@@ -48,7 +48,7 @@ const Header = ({
         ></HeaderMain>
       ) : (
         <HeaderMobile
-          title="Progress Tag"
+          title="Main"
           callbackResultSearch={callbackResultSearch}
           modalFilterOpen={modalFilterOpen}
           setModalFilterOpen={setModalFilterOpen}

@@ -1,33 +1,39 @@
 import {
-  IonHeader,
-  IonGrid,
-  IonRow,
-  IonCol,
-  IonThumbnail,
-  IonItem,
-  IonNote,
-  IonText,
-  IonLabel,
-  IonImg,
-  IonList,
-  IonIcon,
-  IonRouterLink,
-  IonToolbar,
-  IonChip,
-  IonBadge,
-  IonAccordionGroup,
   IonAccordion,
+  IonAccordionGroup,
+  IonBadge,
+  IonButton,
+  IonChip,
+  IonCol,
+  IonGrid,
+  IonHeader,
+  IonIcon,
+  IonImg,
+  IonItem,
+  IonLabel,
+  IonList,
+  IonNote,
   IonPopover,
+  IonRouterLink,
+  IonRow,
+  IonText,
+  IonThumbnail,
+  IonToolbar,
 } from "@ionic/react";
-import { documentAttachOutline, constructOutline, documentTextOutline, newspaperOutline } from "ionicons/icons";
+import { constructOutline, documentAttachOutline, documentTextOutline, imagesOutline, newspaperOutline } from "ionicons/icons";
 import { Blurhash } from "react-blurhash";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 
-import noImageAvailable from "../../../source/img/No_Image_Available.jpg";
+import { useContext } from "react";
 import timestampToTime from "../../../components/FC_Components/timestampToTime";
+import { ProgressTagContext } from "../../../context/progressTagContext";
 import { ITF_ProgressTag } from "../../../interface/mainInterface";
+import noImageAvailable from "../../../source/img/No_Image_Available.jpg";
+import { AuxiliaryDataContext } from "../../../context/auxiliaryDataContext";
 
 export default function DetailPageDesktop({ object, handleRemoveBlurhash, imageNumberTemp, setShowImage, calculatorTotal, handleChangeQuantity, setProgressTagGoTo }) {
+  const { ProgressTag, disPatchProgressTag } = useContext<any>(ProgressTagContext);
+  const { AuxiliaryData, disPatchAuxiliaryData } = useContext<any>(AuxiliaryDataContext);
   return (
     <>
       {/* //! content header */}
@@ -59,10 +65,7 @@ export default function DetailPageDesktop({ object, handleRemoveBlurhash, imageN
                   {object.title}
                 </IonText>
               </IonItem>
-              <IonItem className="ion-no-padding fontSize-normal">
-                <IonLabel color="medium">MSVT:</IonLabel>
-                <IonText className="fontStyle-boil">{object.code}</IonText>
-              </IonItem>
+              
 
               <IonItem className="ion-no-padding fontSize-normal">
                 <IonLabel color="medium">Date Created:</IonLabel>
@@ -80,7 +83,7 @@ export default function DetailPageDesktop({ object, handleRemoveBlurhash, imageN
                     <IonCol
                       key={index}
                       onClick={() => {
-                        object?.images[index]?.image && setShowImage({ isOpen: true, index: index });
+                        object?.images[index]?.image && setShowImage({ isOpen: true, index: index, title: '', images: object?.images });
                       }}
                     >
                       <IonThumbnail className="previewBeforeUpload_content-thumbnail">
@@ -113,52 +116,64 @@ export default function DetailPageDesktop({ object, handleRemoveBlurhash, imageN
         </IonGrid>
         <IonToolbar>
           <span style={{ display: "inline-flex" }}>
-            <IonLabel>Progress Tag: :</IonLabel>
+            <IonLabel>Position :</IonLabel>
 
             <span style={{ borderLeft: "2px solid gray", marginLeft: "8px", marginRight: "8px" }}></span>
           </span>
 
-          {object?.progressTag?.[0]?.id &&
-            object?.progressTag?.map((crr: ITF_ProgressTag, index: number) => {
+         <IonText>{object.area}/{object.local}</IonText>
+        </IonToolbar>
+        <IonToolbar>
+          <span style={{ display: "inline-flex" }}>
+            <IonLabel>Ref :</IonLabel>
+
+            <span style={{ borderLeft: "2px solid gray", marginLeft: "8px", marginRight: "8px" }}></span>
+          </span>
+
+          {object?.ref &&
+            Object.keys(object.ref).map((key: string, index: number) => {
+             
+              const { title, type, urlRef, images , author} = object.ref[key];
               return (
-                <IonChip key={index} color={crr?.type == "Original" ? "success" : "medium"} onClick={() => setProgressTagGoTo({ isOpen: true, messenger: `Xem thông tin của Progress Tag ${crr.id}`, Url: crr?.ref })}>
-                  <IonLabel style={{ paddingRight: 5 }}>{crr?.id}</IonLabel>
-                </IonChip>
+                <span key={"Mobile-ProgressTag-Preview" + index}>
+                  <IonChip id={`mobile-hover-trigger-previewProgressTag-${index}-${key}`} color={type === "Original" ? "success" : "medium"}>
+                    <IonLabel>{key || "Unknown"}</IonLabel>
+                  </IonChip>
+                  <IonPopover trigger={`mobile-hover-trigger-previewProgressTag-${index}-${key}`} onDidDismiss={() => ""}>
+                    <div style={{ padding: "1rem" }}>
+                      <p>
+                        <i>Sub Title:</i> {title}
+                      </p>
+                      <p>
+                        <i>Author:</i> {author}
+                      </p>
+                      <p>
+                        <i>Type:</i> {type}
+                      </p>
+                      <p style={{ display: "flex", alignItems: "center" }}>
+                        <i>View image</i>
+                        <i>&nbsp;&nbsp;&nbsp;({images?.length})&nbsp;</i>
+                        <IonIcon
+                          icon={imagesOutline}
+                          color="primary"
+                          onClick={() => {
+                            images?.length && setShowImage({ isOpen: true, index: index, title: `Equipment ${key}`, images: images });
+                          }}
+                        />
+                      </p>
+                      <a href={`https://btdbf-equipment-manager.web.app/page/Detail/QRCode/${key}`} target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none" }}>
+                        <IonButton size="small" fill="outline" expand="block">
+                          Click Go to
+                        </IonButton>
+                      </a>
+                    </div>
+                  </IonPopover>
+                </span>
               );
             })}
         </IonToolbar>
-        <IonToolbar>
-          <span style={{ display: "inline-flex" }}>
-            <IonLabel>Total :</IonLabel>
-            <IonLabel color="success" className="fontSize-large padding-left-right-8px">
-              {calculatorTotal}
-            </IonLabel>
-            <IonLabel className="fontStyle-italic fontSize-small ">{object.store[0]?.unit}</IonLabel>
-            <span style={{ borderLeft: "2px solid gray", marginLeft: "8px", marginRight: "8px" }}></span>
-          </span>
-          {object.store.map((crr: any, index: number) => {
-            return (
-              <IonChip key={index} onClick={() => handleChangeQuantity(crr.local, crr.quantity, index)}>
-                <IonLabel style={{ paddingRight: 5 }}>{crr.local}</IonLabel>
-                <IonBadge>{crr.quantity}</IonBadge>
-              </IonChip>
-            );
-          })}
-        </IonToolbar>
-        <IonToolbar>
-          <span style={{ display: "inline-flex" }}>
-            <IonLabel>Group :</IonLabel>
-
-            <span style={{ borderLeft: "2px solid gray", marginLeft: "8px", marginRight: "8px" }}></span>
-          </span>
-          {object?.tag?.map((crr: any, index: number) => {
-            return (
-              <IonChip key={index} color="danger">
-                <IonLabel style={{ paddingRight: 5 }}>{crr}</IonLabel>
-              </IonChip>
-            );
-          })}
-        </IonToolbar>
+        
+       
       </IonHeader>
       {/* //! end content header*/}
 

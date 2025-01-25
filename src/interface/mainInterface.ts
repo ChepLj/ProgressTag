@@ -17,6 +17,9 @@ export interface ITF_StoreObject {
 
 //! Tạo interface cho Data
 export interface ITF_ObjectData {
+  key:string;
+  area: string;
+  local: string;
   id: string;
   code: number | string;
   title: string;
@@ -137,7 +140,8 @@ export interface ITF_ActionDisPatch {
 }
 
 export interface ITF_ProgressTag {
-  id: string;
+  key: string;
+  tag: string;
   type: "Original" | "Temporary";
   ref?: string;
   area: string;

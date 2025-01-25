@@ -1,25 +1,49 @@
-import { IonAccordion, IonAccordionGroup, IonBadge, IonButton, IonButtons, IonChip, IonCol, IonGrid, IonHeader, IonIcon, IonImg, IonItem, IonLabel, IonList, IonModal, IonRow, IonText, IonThumbnail, IonTitle, IonToolbar } from "@ionic/react";
-import { constructOutline, documentAttachOutline, documentTextOutline } from "ionicons/icons";
-import { memo, useEffect, useState } from "react";
-
-
+import {
+  IonAccordion,
+  IonAccordionGroup,
+  IonBadge,
+  IonButton,
+  IonButtons,
+  IonChip,
+  IonCol,
+  IonGrid,
+  IonHeader,
+  IonIcon,
+  IonImg,
+  IonItem,
+  IonLabel,
+  IonList,
+  IonModal,
+  IonPopover,
+  IonRow,
+  IonText,
+  IonThumbnail,
+  IonTitle,
+  IonToolbar,
+} from "@ionic/react";
+import { constructOutline, documentAttachOutline, documentTextOutline, imagesOutline } from "ionicons/icons";
+import { memo, useContext, useEffect, useState } from "react";
 
 import noImageAvailable from "../../../../../../source/img/No_Image_Available.jpg";
 
 import "./PreviewBeforeUpload.css";
-import { ITF_Data, ITF_ObjectData, ITF_ImagesObject } from "../../../../../../interface/mainInterface";
+import { ITF_Data, ITF_ObjectData, ITF_ImagesObject, ITF_ProgressTag } from "../../../../../../interface/mainInterface";
 import timestampToTime from "../../../../../FC_Components/timestampToTime";
+import { ProgressTagContext } from "../../../../../../context/progressTagContext";
+import ModalImageShow from "../../../../../../pages/DetailPage/Modal/ModalImageShow";
 
 //! Main
 const PreviewBeforeUpload = ({ object, className, objectDataOld }: { object: ITF_Data; className: string; objectDataOld?: ITF_ObjectData }) => {
   console.log("🚀 ~ PreviewBeforeUpload ~ object:", object);
   //* Check Render and Unmount
   console.log("%cPreviewBeforeUpload Render", "color:green");
+
+  const { ProgressTag, disPatchProgressTag } = useContext<any>(ProgressTagContext);
   useEffect(() => {
     return () => console.log("%cPreviewBeforeUpload Unmount", "color:red");
   }, []);
   //* END Check Render and Unmount
-  const [showImage, setShowImage] = useState({ isOpen: false, index: 0 });
+  const [showImage, setShowImage] = useState({ isOpen: false, index: 0, title: "", images: [] });
   const imageNumberTemp = [0, 1, 2, 3];
   //TODO: Calculator Total
   const calculatorTotal = object.store.reduce((total: number, crr: any) => {
@@ -56,10 +80,7 @@ const PreviewBeforeUpload = ({ object, className, objectDataOld }: { object: ITF
                 <IonLabel color="medium">MSVT:</IonLabel>
                 <IonText className="fontStyle-boil">{object.code}</IonText>
               </IonItem>
-              <IonItem className="ion-no-padding fontSize-normal">
-                <IonLabel color="medium">Progress Tag:</IonLabel>
-                <IonText className="fontStyle-boil">{`object.progressTag?.id`}</IonText>
-              </IonItem>
+
               <IonItem className="ion-no-padding fontSize-normal">
                 <IonLabel color="medium">Date Created:</IonLabel>
                 <IonText className="fontStyle-italic">{timestampToTime(+object.dateCreated, "date only")}</IonText>
@@ -76,7 +97,7 @@ const PreviewBeforeUpload = ({ object, className, objectDataOld }: { object: ITF
                     <IonCol
                       key={"Desktop-Image-Number" + index}
                       onClick={() => {
-                        object?.images[index]?.image && setShowImage({ isOpen: true, index: index });
+                        object?.images[index]?.image && setShowImage({ isOpen: true, index: index, title: "Image", images: object.images });
                       }}
                     >
                       <IonThumbnail className="previewBeforeUpload_content-thumbnail">
@@ -90,7 +111,6 @@ const PreviewBeforeUpload = ({ object, className, objectDataOld }: { object: ITF
                 <IonList style={{ width: "100%" }}>
                   {object.attachments?.[0] ? (
                     object.attachments?.map((crr, index) => {
-          
                       return (
                         <IonItem className="previewBeforeUpload_content-attachment" key={"Desktop-attachments-Preview" + index}>
                           <IonIcon icon={documentAttachOutline} slot="start" />
@@ -115,6 +135,51 @@ const PreviewBeforeUpload = ({ object, className, objectDataOld }: { object: ITF
             </IonCol>
           </IonRow>
         </IonGrid>
+        <IonToolbar>
+          <span style={{ display: "inline-flex" }}>
+            <IonLabel>Progress Tag :</IonLabel>
+
+            <span style={{ borderLeft: "2px solid gray", marginLeft: "8px", marginRight: "8px" }}></span>
+          </span>
+
+          {object?.progressTag &&
+            object?.progressTag?.map((crr: ITF_ProgressTag, indexProgressTag: number) => {
+              const { tag, type, key } = crr || {};
+              const objectTemp = ProgressTag[key];
+              return (
+                <span key={indexProgressTag}>
+                  <IonChip id={`hover-trigger-previewProgressTag-${indexProgressTag}`} color={crr?.type == "Original" ? "success" : "medium"}>
+                    <IonLabel style={{ paddingRight: 5 }}>{tag}</IonLabel>
+                  </IonChip>
+                  <IonPopover trigger={`hover-trigger-previewProgressTag-${indexProgressTag}`} onDidDismiss={() => ""}>
+                    <div style={{ padding: "1rem" }}>
+                      <p>
+                        <i>Area:</i> {objectTemp?.tag}
+                      </p>
+                      <p>
+                        <i>Local:</i> {objectTemp?.local}
+                      </p>
+                      <p>
+                        <i>Type:</i> {objectTemp?.type}
+                      </p>
+                      <p style={{ display: "flex", alignItems: "center" }}>
+                        <i>View image</i>
+                        <i>&nbsp;&nbsp;&nbsp;({objectTemp?.images.length})&nbsp;</i>
+                        <IonIcon
+                          icon={imagesOutline}
+                          color="primary"
+                          onClick={() => {
+                            objectTemp?.images.length && setShowImage({ isOpen: true, index: 0, title: `ProgressTag ${tag}`, images: objectTemp?.images });
+                          }}
+                        />
+                      </p>
+                      {/* Add more details as needed */}
+                    </div>
+                  </IonPopover>
+                </span>
+              );
+            })}
+        </IonToolbar>
         <IonToolbar>
           <span style={{ display: "inline-flex" }}>
             <IonLabel>Total :</IonLabel>
@@ -194,61 +259,11 @@ const PreviewBeforeUpload = ({ object, className, objectDataOld }: { object: ITF
         </IonRow>
         {/* //! end content previewBeforeUpload */}
       </section>
-      <ModalImageShow
-        state={showImage}
-        images={object.images}
-        callback={(object: any) => {
-          setShowImage(object);
-        }}
-      />
+      <ModalImageShow isPhone={window.screen.width < 800} state={showImage} setShowImage={setShowImage} />
     </section>
   );
 };
 
 //! end Main
-//JSX: Modal Show Image
-function ModalImageShow({ state, images, callback }: { state: any; images: Array<ITF_ImagesObject>; callback: Function }) {
-  //TODO: Tính toán chuyển bức hình tiếp theo khi nhấn next
-  const calculatorIndex = (): number => {
-    if (state.index < images.length - 1) {
-      const newIndex = state.index + 1;
-      return newIndex;
-    } else return 0;
-  };
-  //TODO: end
-  return (
-    <IonModal isOpen={state.isOpen}>
-      <IonHeader>
-        <IonToolbar>
-          <IonButtons slot="start">
-            <IonButton
-              onClick={() => {
-                callback({ isOpen: false, index: 0 });
-              }}
-            >
-              Close
-            </IonButton>
-          </IonButtons>
-          <IonTitle>
-            Image {state.index + 1}/{images.length}
-          </IonTitle>
-          <IonButtons slot="end">
-            <IonButton
-              onClick={() => {
-                callback({ isOpen: true, index: calculatorIndex() });
-              }}
-            >
-              Next
-            </IonButton>
-          </IonButtons>
-        </IonToolbar>
-      </IonHeader>
-
-      <IonImg src={images[state.index]?.image} />
-    </IonModal>
-  );
-}
-
-//JSX_END: Modal Show Image
 
 export default memo(PreviewBeforeUpload);

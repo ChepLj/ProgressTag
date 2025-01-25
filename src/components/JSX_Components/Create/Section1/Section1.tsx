@@ -1,13 +1,17 @@
 import { IonButton, IonChip, IonIcon, IonInput, IonItem, IonLabel, IonList, IonPopover, IonText, IonTextarea } from "@ionic/react";
-import { addOutline } from "ionicons/icons";
-import { useEffect, useState } from "react";
+import { addOutline, imagesOutline } from "ionicons/icons";
+import { useContext, useEffect, useState } from "react";
 import { ITF_ObjectData } from "../../../../interface/mainInterface";
 import ProgressSelectModal from "./ProgressSelectModal";
+import { ProgressTagContext } from "../../../../context/progressTagContext";
+import ModalImageShow from "../../../../pages/DetailPage/Modal/ModalImageShow";
 
 //JSX: Section 1
-function Section1({ step, objectData, progressTagRef }: { step: any; objectData?: ITF_ObjectData; progressTagRef:any }) {
+function Section1({ step, objectData, progressTagRef }: { step: any; objectData?: ITF_ObjectData; progressTagRef: any}) {
   //* Check Render and Unmount
   console.log("%cSection1 Render", "color:green");
+  const { ProgressTag, disPatchProgressTag } = useContext<any>(ProgressTagContext);
+  const [showImage, setShowImage] = useState({ isOpen: false, index: 0, title: "", images: [] });
   useEffect(() => {
     return () => console.log("%cSection1 Unmount", "color:red");
   }, []);
@@ -15,6 +19,7 @@ function Section1({ step, objectData, progressTagRef }: { step: any; objectData?
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [progressTag, setProgressTag] = useState();
+
   let display: "create_section_hidden" | "create_section_display" = "create_section_hidden";
   if (step == 1) {
     display = "create_section_display";
@@ -39,16 +44,36 @@ function Section1({ step, objectData, progressTagRef }: { step: any; objectData?
       codeElm.value = objectData.code.toString();
       descriptionElm.value = replaceBrWithNewline(objectData.description);
       noteElm.value = replaceBrWithNewline(objectData.note);
-      // objectData.progressTag &&
-      //   setProgressTag(objectData.progressTag);
+      if (objectData.progressTag?.[0].tag) {
+        const arrayTemp:any = Object.values(objectData.progressTag).map((crr, index) => {
+          return crr;
+        });
+        setProgressTag(arrayTemp);
+      }
     }
   }, []);
 
   //TODO_END: Assign value when action is Edit
+
+  console.log("🚀 ~ useEffect ~ progressTagRef.current :", progressTagRef.current )
+
+
   //TODO: Update ProgressTag Element
-  useEffect(()=>{
-     progressTagRef.current =  progressTag ? Object.keys(progressTag).map((key, index) => progressTag[key]):''
-  })
+  useEffect(() => {
+    progressTagRef.current = progressTag
+      ? Object.keys(progressTag).map((key, index) => {
+          const tempObject: any = progressTag[key];
+          return {
+            key: tempObject.key,
+            tag: tempObject.tag,
+            type: tempObject.type,
+            area: tempObject.area,
+            local: tempObject.local,
+          };
+        })
+      : "";
+
+  });
   //TODO_END: Update ProgressTag Element
   return (
     <section className={display}>
@@ -74,26 +99,45 @@ function Section1({ step, objectData, progressTagRef }: { step: any; objectData?
       <IonItem>
         <IonText color="tertiary">Progress Tag:</IonText>
         {/* <IonInput name="create-section1-progressTag" placeholder="enter tag in progress" /> */}
-        <p style={{ color: "gray", fontStyle: "italic", fontSize: "10px", width: "auto", textAlign: "end", margin: "10px" }}>(nhấn để thêm Tag)</p>
+
         <IonButton fill="outline" size="small" slot="end" onClick={() => setIsModalOpen(true)}>
+          <p style={{ color: "gray", fontStyle: "italic", fontSize: "10px", width: "auto", textAlign: "end", margin: "10px" }}>(nhấn để thêm Tag)</p>
           <IonIcon slot="icon-only" icon={addOutline} />
         </IonButton>
       </IonItem>
       {progressTag ? (
-        Object.keys(progressTag).map((key, index) => {
-          const { id, type, area } = progressTag[key] || {};
+        Object.keys(progressTag).map((keyTemp, index) => {
+          const { tag, type, key } = progressTag[keyTemp] || {};
+          const objectTemp = ProgressTag[key];
+          
+         
+
           return (
             <span key={key}>
               <IonChip id={`hover-trigger-${key}`} color={type === "Original" ? "success" : "medium"}>
-                <IonLabel>{id || "Unknown"}</IonLabel>
+                <IonLabel>{tag || "Unknown"}</IonLabel>
               </IonChip>
               <IonPopover trigger={`hover-trigger-${key}`} onDidDismiss={() => ""}>
                 <div style={{ padding: "1rem" }}>
                   <p>
-                    <i>Area:</i> {area}
+                    <i>Area:</i> {objectTemp?.tag}
                   </p>
                   <p>
-                    <i>Type:</i> {type}
+                    <i>Local:</i> {objectTemp?.local}
+                  </p>
+                  <p>
+                    <i>Type:</i> {objectTemp?.type}
+                  </p>
+                  <p style={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
+                    <i>View image</i>
+                    <i>&nbsp;&nbsp;&nbsp;({objectTemp?.images.length})&nbsp;</i>
+                    <IonIcon
+                          icon={imagesOutline}
+                          color="primary"
+                          onClick={() => {
+                            objectTemp?.images.length && setShowImage({ isOpen: true, index: 0, title: `ProgressTag ${tag}`, images: objectTemp?.images });
+                          }}
+                        />
                   </p>
                   {/* Add more details as needed */}
                 </div>
@@ -105,7 +149,14 @@ function Section1({ step, objectData, progressTagRef }: { step: any; objectData?
         <div style={{ color: "red", fontStyle: "italic", padding: "10px" }}>"Không có Progress Tag nào được chọn !"</div>
       )}
 
-      <ProgressSelectModal isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} setProgressTag={setProgressTag} />
+      <ProgressSelectModal isModalOpen={isModalOpen} setShowImage={setShowImage} setIsModalOpen={setIsModalOpen} progressTag={progressTag} setProgressTag={setProgressTag} />
+       <ModalImageShow
+         
+            isPhone={window.screen.width < 800}
+            state={showImage}
+        
+            setShowImage={setShowImage}
+            />
     </section>
   );
 }

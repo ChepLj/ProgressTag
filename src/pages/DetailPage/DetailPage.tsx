@@ -1,6 +1,18 @@
-import { IonAlert, IonBackButton, IonButton, IonButtons, IonContent, IonHeader, IonIcon, IonPage, IonTitle, IonToolbar, useIonRouter } from "@ionic/react";
+import {
+  IonAlert,
+  IonBackButton,
+  IonButton,
+  IonButtons,
+  IonContent,
+  IonHeader,
+  IonIcon,
+  IonPage,
+  IonTitle,
+  IonToolbar,
+  useIonRouter,
+} from "@ionic/react";
 import { memo, useContext, useEffect, useRef, useState } from "react";
-import { useHistory, useLocation } from "react-router-dom";
+import { useHistory, useLocation, useParams } from "react-router-dom";
 import { objectListRender } from "../../components/FC_Components/initObjectData";
 import { ITF_ObjectData } from "../../interface/mainInterface";
 
@@ -15,23 +27,29 @@ import firebaseGetMainData from "../../api/getData";
 import { home, qrCodeOutline } from "ionicons/icons";
 import LoadingComponent from "../../components/JSX_Components/LoadingComponent";
 import ModalShowQRCode from "./Modal/ModalShowQRCode";
+import { ProgressTagContext } from "../../context/progressTagContext";
 const DetailPage: React.FC = () => {
   console.log("%cDetail Page Render", "color:green");
-  const { state } = useLocation<string>();
+  // const { state } = useLocation<string>();
+  const { id: state } = useParams<any>(); // Extracts 'id' from the URL
+  console.log("🚀 ~ state:", state);
   // let { current: object } = useRef<ITF_ObjectData>(objectListRender[state]); //: đổi tên current sang object để tường minh
   const object = useRef<ITF_ObjectData>(objectListRender[state]); //: đổi tên current sang object để tường minh
-  console.log("🚀 ~ object:", object)
-
+  const { ProgressTag, disPatchProgressTag } = useContext<any>(ProgressTagContext);
   const [showImage, setShowImage] = useState({ isOpen: false, index: 0 });
   const [changeQuantityModal, setChangeQuantityModal] = useState({ isOpen: false, local: "", quantity: 0, index: 0 });
   const { authorLogin } = useContext<any>(AuthContext);
   const author: string = authorLogin?.email;
   const imageNumberTemp = [0, 1, 2, 3];
   const params = new URLSearchParams(window.location.search);
+
   const [data, setData] = useState(object.current);
   const router = useIonRouter();
-  const history = useHistory();
+
   const [progressTagGoTo, setProgressTagGoTo] = useState({ isOpen: false, messenger: "", Url: "" });
+
+
+
   //TODO: Calculator Total
   const calculatorTotal = data?.store?.reduce((total: number, crr: any) => {
     return total + crr.quantity;
@@ -41,15 +59,17 @@ const DetailPage: React.FC = () => {
   //TODO: handle show from QRcode
   useEffect(() => {
     const disPatch = (result) => {
+      console.log("🚀 ~ disPatch ~ result:", result);
       if (result.type == "SUCCESSFUL") {
         console.log(result.payload);
         setData(result.payload);
       }
     };
     if (!data) {
-      console.log("check");
-      const id = params.get("id");
-      const ref = params.get("ref");
+      // const id = params.get("id");
+      const id = state;
+      // const ref = params.get("ref");
+      const ref = `ProgressTag/${id}`;
       id && ref && firebaseGetMainData(ref, disPatch);
     }
   }, [params]);
@@ -60,7 +80,7 @@ const DetailPage: React.FC = () => {
       console.log("%cDetail Page Unmount", "color:red");
     };
   }, []);
-
+  console.log("🚀 ~ useEffect ~ data:", data);
   //TODO: handle change quantity
   const handleChangeQuantity = (local: string, quantity: number, index: number) => {
     authorLogin &&
@@ -80,7 +100,7 @@ const DetailPage: React.FC = () => {
   };
 
   //TODO_END: handel remove blurhash
-
+  // console.log("🚀 ~ authorLogin:", authorLogin);
   return (
     <IonPage>
       <IonHeader>
@@ -88,13 +108,11 @@ const DetailPage: React.FC = () => {
           <IonButtons slot="start">
             {authorLogin ? (
               <>
-                <IonBackButton></IonBackButton>
-                {/* <IonButton onClick={goBack}>Back</IonButton> */}
+                {router.canGoBack() && <IonBackButton></IonBackButton>}
+                {!router.canGoBack() && <HomeButton />}
               </>
             ) : (
-              <IonButton size="small" href="/">
-                <IonIcon slot="icon-only" ios={home} md={home}></IonIcon>
-              </IonButton>
+              <HomeButton />
             )}
           </IonButtons>
           <IonTitle>{data?.id}</IonTitle>
@@ -105,9 +123,7 @@ const DetailPage: React.FC = () => {
               </IonButton>
             </IonButtons>
           ) : (
-            <IonButton size="small" href="/">
-              <IonIcon slot="icon-only" ios={home} md={home}></IonIcon>
-            </IonButton>
+            <HomeButton />
           )}
         </IonToolbar>
       </IonHeader>
@@ -137,14 +153,7 @@ const DetailPage: React.FC = () => {
           <LoadingComponent />
         )}
 
-        <ModalImageShow
-          isPhone={window.screen.width < 800}
-          state={showImage}
-          images={data?.images}
-          callback={(object: any) => {
-            setShowImage(object);
-          }}
-        />
+        <ModalImageShow isPhone={window.screen.width < 800} state={showImage} setShowImage={setShowImage} />
         <ModalChangeQuantity
           isOpenModal={changeQuantityModal.isOpen}
           local={changeQuantityModal.local}
@@ -178,5 +187,15 @@ const DetailPage: React.FC = () => {
     </IonPage>
   );
 };
+
+//JSX Home Button
+function HomeButton() {
+  return (
+    <IonButton size="small" href="/">
+      <IonIcon slot="icon-only" ios={home} md={home}></IonIcon>
+    </IonButton>
+  );
+}
+//JSX:End Home Button
 
 export default memo(DetailPage);

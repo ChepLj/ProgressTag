@@ -1,6 +1,8 @@
 {
   "hosting": {
     "public": "build",
+    "site": "progress-tag",
+    
     "ignore": [
       "firebase.json",
       "**/.*",

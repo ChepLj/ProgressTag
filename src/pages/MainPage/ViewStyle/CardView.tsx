@@ -116,6 +116,7 @@ const ItemList = ({
   ionItemSlidingRef: any;
   authorLogin: ITF_AuthorLogin;
 }) => {
+
   const history = useHistory(); //: lấy history
   const handleRemoveBlurhash = (id: string) => {
     const elm = document.getElementById(id);
@@ -155,14 +156,14 @@ const ItemList = ({
         {objectData.icon.hash && <Blurhash id={`blurhash-${index}`} className="viewStyle_img-blurhash" hash={objectData.icon.hash} resolutionX={32} resolutionY={32} punch={1} />}
       </IonThumbnail>
       <div style={{ width: "100%", overflow: "hidden", whiteSpace: "nowrap", textOverflow: "ellipsis", paddingLeft: "2px" }}>
-        <IonLabel style={{ fontSize: "11px", color: "green" }}>{objectData.id}</IonLabel>
-        <IonLabel style={{ fontSize: "11px", color: "gray", paddingLeft: "2px" }}>({objectData.code})</IonLabel>
+        <IonLabel style={{ fontSize: "9px", color: "gray" }}>{objectData.id}</IonLabel>
+        {/* <IonLabel style={{ fontSize: "11px", color: "gray", paddingLeft: "2px" }}>({objectData.code})</IonLabel> */}
       </div>
       <div style={{ width: "100%", overflow: "hidden", whiteSpace: "nowrap", textOverflow: "ellipsis", paddingLeft: "2px" }}>
-        <IonLabel style={{ fontSize: "14px", color: "" }}>{objectData.title}</IonLabel>
+        <IonLabel style={{ fontSize: "14px", color: "green" }}>{objectData.title}</IonLabel>
       </div>
       <AuthorStyle>
-        <IonLabel>{objectData.author}</IonLabel>
+        <IonLabel>{objectData.area}/{objectData.local}</IonLabel>
       </AuthorStyle>
       <AuthorStyle>
         <IonLabel>{timestampToTime(+objectData.dateCreated, "date only")}</IonLabel>

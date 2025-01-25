@@ -15,7 +15,7 @@ const QRCodeGeneratorPage = ({ object }: { object: ITF_ObjectData }) => {
     <section style={qrMakeWrapStye} className="test">
       <QRCodeCanvas
         id="qr-code-make"
-        value={`https://btdbf-equipment-manager.web.app/page/detail/qrcode?id=${object.id}&ref=MainData/${object.id}`}
+        value={`https://progress-tag.firebaseapp.com/page/detail/QRCode/${object.id}`}
         title={"Equipment QR Code"}
         size={300}
         bgColor={"#ffffff"}
@@ -36,20 +36,20 @@ const QRCodeGeneratorPage = ({ object }: { object: ITF_ObjectData }) => {
       <div style={{ width: "100%", margin: "0 auto", marginTop: "20px" }}>
         <IonItem>
           <IonText style={{ minWidth: "80px" }}>ID:</IonText>
-          <IonText color='secondary'>
+          <IonText color='medium'>
             <b>{object.id}</b>
           </IonText>
         </IonItem>
         <IonItem>
-          <IonText style={{ minWidth: "80px" }}>MSVT:</IonText>
-          <IonText>
-            <b>{object.code}</b>
+          <IonText style={{ minWidth: "80px" }}>Name:</IonText>
+          <IonText color= 'success'>
+            <b>{object.title}</b>
           </IonText>
         </IonItem>
         <IonItem>
-          <IonText style={{ minWidth: "80px" }}>Name:</IonText>
+          <IonText style={{ minWidth: "80px" }}>Position:</IonText>
           <IonText>
-            <b>{object.title}</b>
+            <b>{object.area}/{object.local}</b>
           </IonText>
         </IonItem>
         <IonItem>

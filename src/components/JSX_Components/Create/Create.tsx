@@ -17,6 +17,8 @@ import Section1 from "./Section1/Section1";
 import Section2 from "./Section2/Section2";
 import Section3 from "./Section3/Section3";
 import SectionPreview from "./SectionPreview/SectionPreview";
+import { ProgressTagContext } from "../../../context/progressTagContext";
+import firebaseGetMainData from "../../../api/getData";
 //! Main
 const Create = () => {
   //* Check Render and Unmount
@@ -36,6 +38,17 @@ const Create = () => {
   const arrayFile = useRef<Array<any>>([]);
   const progressTagRef = useRef<Array<any>>([]);
   const totalOfStep = 4;
+  const { ProgressTag, disPatchProgressTag } = useContext<any>(ProgressTagContext);
+
+  //TODO: Lấy ProgressTag khi load Page lần đầu
+  useEffect(() => {
+    //: lấy data từ firebase sao đó dispatch đê render lại
+    const childRef = "ProgressTag/";
+    firebaseGetMainData(childRef, disPatchProgressTag);
+  }, []);
+
+  //TODO_END:Lấy ProgressTag khi load Page lần đầu
+
   //TODO: Handel Change Step
   function handelNextStep() {
     if (step <= totalOfStep) {
@@ -173,11 +186,9 @@ const Create = () => {
   //TODO_end: cancel Upload
 
   return (
-    <  >
+    <>
       <IonHeader>
-      
         <IonToolbar>
-       
           <IonButtons slot="start" onClick={handelBackStep}>
             {step == 1 ? (
               <IonMenuButton />
@@ -201,8 +212,11 @@ const Create = () => {
           <Section2 step={step} objectData={objectData} arrayStock={arrayStock} arrayTag={arrayTag}></Section2>
           <Section3 step={step} objectData={objectData} arrayImage={arrayImage} arrayFile={arrayFile}></Section3>
           <SectionPreview step={step} objectData={objectData ? () => handelCreateData("edit") : () => handelCreateData("create")} objectDataOld={objectData}></SectionPreview>
-          {modalUpLoadState && objectData ? <ModalEditUpload isOpen={modalUpLoadState} callbackClose={cancelUpload} objectOldData={objectData} objectDataFC={() => handelCreateData("edit")} /> : <ModalCreateUpload isOpen={modalUpLoadState} callbackClose={cancelUpload} objectDataFC={() => handelCreateData("create")} />}
-          
+          {modalUpLoadState && objectData ? (
+            <ModalEditUpload isOpen={modalUpLoadState} callbackClose={cancelUpload} objectOldData={objectData} objectDataFC={() => handelCreateData("edit")} />
+          ) : (
+            <ModalCreateUpload isOpen={modalUpLoadState} callbackClose={cancelUpload} objectDataFC={() => handelCreateData("create")} />
+          )}
         </section>
       </IonContent>
     </>
@@ -212,4 +226,4 @@ const Create = () => {
 //!End main
 
 //! Export
-export default Create
+export default Create;

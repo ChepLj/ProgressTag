@@ -21,23 +21,27 @@ import {
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
-import { constructOutline, documentAttachOutline, documentTextOutline, key } from "ionicons/icons";
-import { memo, useEffect, useState } from "react";
+import { constructOutline, documentAttachOutline, documentTextOutline, imagesOutline, key } from "ionicons/icons";
+import { memo, useContext, useEffect, useState } from "react";
 
 import { ITF_Data, ITF_ImagesObject, ITF_ProgressTag } from "../../../../../../interface/mainInterface";
 import timestampToTime from "../../../../../FC_Components/timestampToTime";
 import "./PreviewBeforeUploadMobile.css";
+import { ProgressTagContext } from "../../../../../../context/progressTagContext";
+import ModalImageShow from "../../../../../../pages/DetailPage/Modal/ModalImageShow";
 
 //! Main
 const PreviewBeforeUploadMobile = ({ object, className, objectDataOld }: { object: ITF_Data; objectDataOld: any; className: string }) => {
   console.log("🚀 ~ PreviewBeforeUploadMobile ~ object:", object);
   //* Check Render and Unmount
   console.log("%cPreviewBeforeUpload Render", "color:green");
+
+  const { ProgressTag, disPatchProgressTag } = useContext<any>(ProgressTagContext);
   useEffect(() => {
     return () => console.log("%cPreviewBeforeUpload Unmount", "color:red");
   }, []);
   //* END Check Render and Unmount
-  const [showImage, setShowImage] = useState({ isOpen: false, index: 0 });
+  const [showImage, setShowImage] = useState({ isOpen: false, index: 0, title: "", images: [] });
   //TODO: Calculator Total
   const calculatorTotal = object.store.reduce((total: number, crr: any) => {
     return total + crr.quantity;
@@ -94,21 +98,36 @@ const PreviewBeforeUploadMobile = ({ object, className, objectDataOld }: { objec
         {object?.progressTag && (
           <IonToolbar>
             {object?.progressTag.map((crr: ITF_ProgressTag, index: number) => {
-              const { id, type, area } = crr || {};
+              const { tag, type, key } = crr || {};
+              const objectTemp = ProgressTag[key];
               return (
                 <span key={"Mobile-ProgressTag-Preview" + index}>
-                  <IonChip id={`hover-trigger-${index}-${id}`} color={type === "Original" ? "success" : "medium"}>
-                    <IonLabel>{id || "Unknown"}</IonLabel>
+                  <IonChip id={`mobile-hover-trigger-previewProgressTag-${index}-${tag}`} color={type === "Original" ? "success" : "medium"}>
+                    <IonLabel>{tag || "Unknown"}</IonLabel>
                   </IonChip>
-                  <IonPopover trigger={`hover-trigger-${index}-${id}`} onDidDismiss={() => ""}>
+                  <IonPopover trigger={`mobile-hover-trigger-previewProgressTag-${index}-${tag}`} onDidDismiss={() => ""}>
                     <div style={{ padding: "1rem" }}>
                       <p>
-                        <b><i>Area:</i></b> {area}
+                        <i>Area:</i> {objectTemp?.tag}
                       </p>
                       <p>
-                        <b><i>Type:</i></b> {type}
+                        <i>Local:</i>{objectTemp?.local}
                       </p>
-                      {/* Add more details as needed */}
+                      <p>
+                        <i>Type:</i> {objectTemp?.type}
+                      </p>
+                      <p style={{ display: "flex", alignItems: "center" }}>
+                        <i>View image</i>
+                        <i>&nbsp;&nbsp;&nbsp;({objectTemp?.images.length})&nbsp;</i>
+                        <IonIcon
+                          icon={imagesOutline}
+                          color="primary"
+                          onClick={() => {
+                            objectTemp?.images.length && setShowImage({ isOpen: true, index: 0, title: `${tag} ProgressTag `, images: objectTemp?.images });
+                          }}
+                        />
+                      </p>
+                      
                     </div>
                   </IonPopover>
                 </span>
@@ -210,7 +229,7 @@ const PreviewBeforeUploadMobile = ({ object, className, objectDataOld }: { objec
           <IonRow>
             <IonCol
               onClick={() => {
-                object?.images[0]?.image && setShowImage({ isOpen: true, index: 0 });
+                object?.images[0]?.image && setShowImage({ isOpen: true, index: 0, title: `Image`, images: object?.images });
               }}
             >
               <IonThumbnail className="previewBeforeUpload_content-thumbnail">
@@ -219,7 +238,7 @@ const PreviewBeforeUploadMobile = ({ object, className, objectDataOld }: { objec
             </IonCol>
             <IonCol
               onClick={() => {
-                object?.images[1]?.image && setShowImage({ isOpen: true, index: 1 });
+                object?.images[1]?.image && setShowImage({ isOpen: true, index: 1, title: `Image`, images: object?.images });
               }}
             >
               <IonThumbnail className="previewBeforeUpload_content-thumbnail">
@@ -228,7 +247,7 @@ const PreviewBeforeUploadMobile = ({ object, className, objectDataOld }: { objec
             </IonCol>
             <IonCol
               onClick={() => {
-                object?.images[2]?.image && setShowImage({ isOpen: true, index: 2 });
+                object?.images[2]?.image && setShowImage({ isOpen: true, index: 2, title: `Image`, images: object?.images });
               }}
             >
               <IonThumbnail className="previewBeforeUpload_content-thumbnail">
@@ -237,7 +256,7 @@ const PreviewBeforeUploadMobile = ({ object, className, objectDataOld }: { objec
             </IonCol>
             <IonCol
               onClick={() => {
-                object?.images[3]?.image && setShowImage({ isOpen: true, index: 3 });
+                object?.images[3]?.image && setShowImage({ isOpen: true, index: 3, title: `Image`, images: object?.images });
               }}
             >
               <IonThumbnail className="previewBeforeUpload_content-thumbnail">
@@ -311,60 +330,17 @@ const PreviewBeforeUploadMobile = ({ object, className, objectDataOld }: { objec
         {/* //! end content previewBeforeUpload */}
       </section>
       <ModalImageShow
-        state={showImage}
-        images={object.images}
-        callback={(object: any) => {
-          setShowImage(object);
-        }}
+   
+      isPhone={window.screen.width < 800}
+      state={showImage}
+  
+      setShowImage={setShowImage}
       />
     </section>
   );
 };
 
 //! end Main
-//JSX: Modal Show Image
-function ModalImageShow({ state, images, callback }: { state: any; images: Array<ITF_ImagesObject>; callback: Function }) {
-  //TODO: Tính toán chuyển bức hình tiếp theo khi nhấn next
-  const calculatorIndex = (): number => {
-    if (state.index < images.length - 1) {
-      const newIndex = state.index + 1;
-      return newIndex;
-    } else return 0;
-  };
-  //TODO: end
-  return (
-    <IonModal isOpen={state.isOpen}>
-      <IonHeader>
-        <IonToolbar>
-          <IonButtons slot="start">
-            <IonButton
-              onClick={() => {
-                callback({ isOpen: false, index: 0 });
-              }}
-            >
-              Close
-            </IonButton>
-          </IonButtons>
-          <IonTitle>
-            Image {state.index + 1}/{images.length}
-          </IonTitle>
-          <IonButtons slot="end">
-            <IonButton
-              onClick={() => {
-                callback({ isOpen: true, index: calculatorIndex() });
-              }}
-            >
-              Next
-            </IonButton>
-          </IonButtons>
-        </IonToolbar>
-      </IonHeader>
 
-      <IonImg src={images[state.index]?.image} />
-    </IonModal>
-  );
-}
-
-//JSX_END: Modal Show Image
 
 export default memo(PreviewBeforeUploadMobile);

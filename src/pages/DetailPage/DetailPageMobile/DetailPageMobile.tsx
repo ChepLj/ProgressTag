@@ -2,6 +2,7 @@ import {
   IonAccordion,
   IonAccordionGroup,
   IonBadge,
+  IonButton,
   IonChip,
   IonCol,
   IonGrid,
@@ -21,18 +22,21 @@ import {
   IonToolbar,
 } from "@ionic/react";
 
-import { constructOutline, documentAttachOutline, documentTextOutline, newspaperOutline } from "ionicons/icons";
-import { memo } from "react";
+import { constructOutline, documentAttachOutline, documentTextOutline, imagesOutline, newspaperOutline } from "ionicons/icons";
+import { memo, useContext } from "react";
 import { Blurhash } from "react-blurhash";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import timestampToTime from "../../../components/FC_Components/timestampToTime";
 import "./DetailPageMobile.css";
 import noImageAvailable from "../../../source/img/No_Image_Available.jpg";
 import { ITF_ProgressTag } from "../../../interface/mainInterface";
+import { ProgressTagContext } from "../../../context/progressTagContext";
+import { AuxiliaryDataContext } from "../../../context/auxiliaryDataContext";
+import { Link } from "react-router-dom";
 const DetailPage = ({ object, handleRemoveBlurhash, calculatorTotal, handleChangeQuantity, setShowImage, setProgressTagGoTo }) => {
-  console.log("🚀 ~ DetailPage ~ object:", object)
   console.log("%cDetail Page Render", "color:green");
-
+  const { ProgressTag, disPatchProgressTag } = useContext<any>(ProgressTagContext);
+  const { AuxiliaryData, disPatchAuxiliaryData } = useContext<any>(AuxiliaryDataContext);
   return (
     <>
       {" "}
@@ -40,7 +44,7 @@ const DetailPage = ({ object, handleRemoveBlurhash, calculatorTotal, handleChang
       <IonHeader className="detail_content-header" id="detail_content-header">
         <IonGrid>
           <IonRow>
-            {/* <IonCol size="4">
+            <IonCol size="4">
               <IonThumbnail className="detail_content-thumbnail">
                 <LazyLoadImage
                   className="detail_content-thumbnail-img"
@@ -61,19 +65,20 @@ const DetailPage = ({ object, handleRemoveBlurhash, calculatorTotal, handleChang
                 </IonLabel>
                 <IonLabel className="fontStyle-italic fontSize-normal detail_content-unit">{object.store[0]?.unit}</IonLabel>
               </IonItem>
-            </IonCol> */}
-            <IonCol size="12">
+            </IonCol>
+            <IonCol size="8">
               <IonItem className="ion-no-padding fontSize-normal">
-                <IonLabel >ProgressTag:</IonLabel>
-                <IonText className="fontStyle-boil" color="danger" style={{fontSize: '18px'}}>{object.code}</IonText>
+                <IonNote color="medium" slot="start" style={{ marginRight: 4 }}>
+                  Name:
+                </IonNote>
+                <IonText className="fontStyle-boil ion-text-wrap ion-text-right " color="primary">
+                  {object.title}
+                </IonText>
               </IonItem>
               <IonItem className="ion-no-padding fontSize-normal">
-                <IonLabel color="medium" >
-                  Area:
-                </IonLabel>
-                <IonText className="fontStyle-boil ">{object.title}</IonText>
+                <IonLabel color="medium">MSVT:</IonLabel>
+                <IonText className="fontStyle-boil">{object.code}</IonText>
               </IonItem>
-
               <IonItem className="ion-no-padding fontSize-normal">
                 <IonLabel color="medium">Date Created:</IonLabel>
                 <IonText className="fontStyle-italic">{timestampToTime(+object!.dateCreated, "date only")}</IonText>
@@ -85,18 +90,51 @@ const DetailPage = ({ object, handleRemoveBlurhash, calculatorTotal, handleChang
             </IonCol>
           </IonRow>
         </IonGrid>
-        {object?.progressTag?.[0]?.id && (
+        {object?.progressTag[0].tag && (
           <IonToolbar>
             {object?.progressTag?.map((crr: ITF_ProgressTag, index: number) => {
+              const { tag, type, key } = crr || {};
+              const objectTemp = ProgressTag[key];
               return (
-                <IonChip key={index} color={crr.type == "Original" ? "success" : "medium"} onClick={() => setProgressTagGoTo({ isOpen: true, messenger: `Xem thông tin của Progress Tag ${crr.id}`, Url: crr?.ref })}>
-                  <IonLabel style={{ paddingRight: 5 }}>{crr.id}</IonLabel>
-                </IonChip>
+                <span key={"Mobile-ProgressTag-Preview" + index}>
+                  <IonChip id={`mobile-hover-trigger-previewProgressTag-${index}-${tag}`} color={type === "Original" ? "success" : "medium"}>
+                    <IonLabel>{tag || "Unknown"}</IonLabel>
+                  </IonChip>
+                  <IonPopover trigger={`mobile-hover-trigger-previewProgressTag-${index}-${tag}`} onDidDismiss={() => ""}>
+                    <div style={{ padding: "1rem" }}>
+                      <p>
+                        <i>Area:</i> {objectTemp?.tag}
+                      </p>
+                      <p>
+                        <i>Local:</i> {objectTemp?.local}
+                      </p>
+                      <p>
+                        <i>Type:</i> {objectTemp?.type}
+                      </p>
+                      <p style={{ display: "flex", alignItems: "center" }}>
+                        <i>View image</i>
+                        <i>&nbsp;&nbsp;&nbsp;({objectTemp?.images.length})&nbsp;</i>
+                        <IonIcon
+                          icon={imagesOutline}
+                          color="primary"
+                          onClick={() => {
+                            objectTemp?.images.length && setShowImage({ isOpen: true, index: index, title: `${tag} ProgressTag`, images: objectTemp?.images });
+                          }}
+                        />
+                      </p>
+                      <a href={`${AuxiliaryData.ProgressTagHostUrl}/${key}`} target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none" }}>
+                        <IonButton size="small" fill="outline" expand="block">
+                          Click Go to
+                        </IonButton>
+                      </a>
+                    </div>
+                  </IonPopover>
+                </span>
               );
             })}
           </IonToolbar>
         )}
-        {/* <IonToolbar>
+        <IonToolbar>
           {object.store.map((crr: any, index: number) => {
             return (
               <IonChip key={index + "store"} onClick={() => handleChangeQuantity(crr.local, crr.quantity, index)}>
@@ -114,7 +152,7 @@ const DetailPage = ({ object, handleRemoveBlurhash, calculatorTotal, handleChang
               </IonChip>
             );
           })}
-        </IonToolbar> */}
+        </IonToolbar>
       </IonHeader>
       {/* //! end content header*/}
       {/* //! content header fake*/}
@@ -152,19 +190,19 @@ const DetailPage = ({ object, handleRemoveBlurhash, calculatorTotal, handleChang
           </IonRow>
         </IonGrid>
 
-        {object?.progressTag?.[0]?.id && (
+        {object?.progressTag[0].tag && (
           <IonToolbar>
             {object?.progressTag?.map((crr: ITF_ProgressTag, index: number) => {
               return (
                 <IonChip key={index} color={crr.type == "Original" ? "success" : "medium"}>
-                  <IonLabel style={{ paddingRight: 5 }}>{crr.id}</IonLabel>
+                  <IonLabel style={{ paddingRight: 5 }}>{crr.tag}</IonLabel>
                 </IonChip>
               );
             })}
           </IonToolbar>
         )}
 
-        {/* <IonToolbar>
+        <IonToolbar>
           {object.store.map((crr: any, index: number) => {
             return (
               <IonChip key={index + "storeFake"}>
@@ -182,7 +220,7 @@ const DetailPage = ({ object, handleRemoveBlurhash, calculatorTotal, handleChang
               </IonChip>
             );
           })}
-        </IonToolbar> */}
+        </IonToolbar>
       </IonHeader>
       {/* //! end content header fake*/}
       {/* //! content detail */}
@@ -191,7 +229,7 @@ const DetailPage = ({ object, handleRemoveBlurhash, calculatorTotal, handleChang
           <IonRow>
             <IonCol
               onClick={() => {
-                object?.images[0]?.image && setShowImage({ isOpen: true, index: 0 });
+                object?.images[0]?.image && setShowImage({ isOpen: true, index: 0, title: `Image`, images: object?.images });
               }}
             >
               <IonThumbnail className="detail_content-thumbnail">
@@ -216,7 +254,7 @@ const DetailPage = ({ object, handleRemoveBlurhash, calculatorTotal, handleChang
             </IonCol>
             <IonCol
               onClick={() => {
-                object?.images[1]?.image && setShowImage({ isOpen: true, index: 1 });
+                object?.images[1]?.image && setShowImage({ isOpen: true, index: 1, title: `Image`, images: object?.images });
               }}
             >
               <IonThumbnail className="detail_content-thumbnail">
@@ -241,7 +279,7 @@ const DetailPage = ({ object, handleRemoveBlurhash, calculatorTotal, handleChang
             </IonCol>
             <IonCol
               onClick={() => {
-                object?.images[2]?.image && setShowImage({ isOpen: true, index: 2 });
+                object?.images[2]?.image && setShowImage({ isOpen: true, index: 2, title: `Image`, images: object?.images });
               }}
             >
               <IonThumbnail className="detail_content-thumbnail">
@@ -266,7 +304,7 @@ const DetailPage = ({ object, handleRemoveBlurhash, calculatorTotal, handleChang
             </IonCol>
             <IonCol
               onClick={() => {
-                object?.images[3]?.image && setShowImage({ isOpen: true, index: 3 });
+                object?.images[3]?.image && setShowImage({ isOpen: true, index: 3, title: `Image`, images: object?.images });
               }}
             >
               <IonThumbnail className="detail_content-thumbnail">
@@ -356,7 +394,7 @@ const DetailPage = ({ object, handleRemoveBlurhash, calculatorTotal, handleChang
           <IonAccordion value="fourth">
             <IonItem slot="header" color="light">
               <IonIcon icon={documentAttachOutline} size="small" className="detail_accordion-icon"></IonIcon>
-              <IonLabel>Drawing & Document</IonLabel>
+              <IonLabel>Attachments</IonLabel>
             </IonItem>
             <IonList slot="content" color="secondary">
               {object.attachments?.[0] ? (

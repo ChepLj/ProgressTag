@@ -92,7 +92,7 @@ function Section3({ step, arrayImage, arrayFile, objectData }: { step: any; arra
     setFile(undefined);
   };
   //TODO: handle delete File
-  console.log(file);
+
   return (
     <section className={display}>
       <IonGrid>
